@@ -1,0 +1,37 @@
+{
+  "name": "50x15",
+  "version": "1.0.0",
+  "description": "Multiplayer Who wants to be a millionaire browser game",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Manoplo/Who-wants-to-be-a-millionaire.git"
+  },
+  "keywords": [
+    "Node.js",
+    "socket.io",
+    "Javascript",
+    "browser",
+    "game",
+    "who",
+    "wants",
+    "to",
+    "be",
+    "a",
+    "millionaire"
+  ],
+  "author": "Manuel Martín Manoplo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Manoplo/Who-wants-to-be-a-millionaire/issues"
+  },
+  "homepage": "https://github.com/Manoplo/Who-wants-to-be-a-millionaire#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.7",
+    "socket.io": "^4.1.1"
+  }
+}

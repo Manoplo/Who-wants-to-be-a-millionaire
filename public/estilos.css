@@ -1,0 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=Lilita+One&family=Montserrat:wght@200&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Farro:wght@700&display=swap');
+* {
+    box-sizing: border-box;
+}
+
+p {
+    font-family: 'Lilita One', cursive;
+    color: rgb(207, 79, 20);
+}
+
+.container {
+    width: 700px;
+}
+
+.titulo {
+    font-family: 'Montserrat', sans-serif !important;
+    color: rgb(207, 79, 20);
+}
+
+.subtitulo {
+    font-family: 'Montserrat', sans-serif !important;
+    color: grey;
+}
+
+.btn {
+    padding: 15px;
+    width: 400px;
+    font-family: 'Montserrat', sans-serif !important;
+}
+
+.pantallanick {
+    margin-top: 200px;
+    box-shadow: 2px 5px 15px -3px #000000;
+    padding: 30px;
+    border-radius: 0.5%;
+    min-height: 200px;
+    width: 50%;
+}
+
+.pantalla {
+    margin-top: 100px;
+    box-shadow: 2px 5px 15px -3px #000000;
+    padding: 30px;
+    border-radius: 0.5%;
+    min-height: 650px;
+    max-width: 1000px;
+}
+
+.votos {
+    padding: 15px;
+    width: 70px;
+    background-color: rgb(207, 79, 20);
+    border-radius: 5%;
+    text-align: center;
+    color: white;
+    font-family: 'Lilita One', cursive;
+}
+
+.tiempo {
+    font-family: 'Montserrat', sans-serif;
+    color: gray;
+}
+
+.contador {
+    font-family: 'Lilita One', cursive;
+    color: rgb(207, 79, 20);
+}
+
+.pregunta {
+    font-family: 'Lilita One', cursive;
+    color: rgb(83, 83, 83);
+}
+
+.respuesta {
+    margin-top: 20px;
+    font-family: 'Lilita One', cursive;
+    color: rgb(83, 83, 83);
+}
+
+.jugadores-partida {
+    font-family: 'Montserrat', sans-serif;
+    color: rgb(83, 83, 83);
+}
+
+.level {
+    height: 100px;
+    width: 100px;
+    background-color: rgb(230, 230, 230);
+    border-radius: 50%;
+}
+
+.level-numero{
+    padding-top: 35px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 30px;
+}
+

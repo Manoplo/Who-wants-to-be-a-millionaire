@@ -1,0 +1,6 @@
+ToDo: 
+1) Dibujar pelotitas que van coloreandose. 
+
+1- Eliminar jugadores (BATTLE ROYALE MODE).
+2- Contar puntos. 
+3- Crear Random

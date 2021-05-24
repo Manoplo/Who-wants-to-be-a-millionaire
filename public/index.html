@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="estilos.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous" />
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="container d-flex justify-content-center">
+        <div class="pantallanick" id="pantallanick" style="display: block">
+            <div class="row">
+                <div class="col-12 d-block text-center">
+                    <h1 class="titulo">¿Who wants to be a millionaire?</h1>
+                    <h2 class="subtitulo">Collective Edition by Manuel Martín</h2>
+                </div>
+                <div class="row">
+                    <div class="col-12 d-block text-center">
+                        <div class="mb-3">
+                            <label for="nombreDeUsuario" class="form-label">Nombre:</label>
+                            <input type="text" class="form-control" id="input">
+                            <div id="emailHelp" class="form-text">Introduce un nombre para la partida.</div>
+                        </div>
+                        <button id="botonNick" class="btn btn-primary">Enviar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pantalla" id="pantalla" style="display:none">
+            <div class="row">
+                <div class="col-12 d-flex justify-content-center">
+                    <h1 class="tiempo">Tiempo</h1>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12  d-flex justify-content-center">
+                    <h2 id="contador" class="contador">30</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-sm-12  d-flex justify-content-center mt-5">
+                    <h1 id="pregunta" class="pregunta"></h1>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-sm-12  d-flex justify-content-around">
+                    <button id="boton1" class="btn btn-primary btn-sm">
+              Respuesta
+            </button>
+                    <div id="votos1" class="votos">?</div>
+                    <button id="boton2" class="btn btn-primary btn-sm">
+              Respuesta
+            </button>
+                    <div id="votos2" class="votos">?</div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-12  d-flex justify-content-around">
+                    <button id="boton3" class="btn btn-primary btn-sm">
+              Respuesta
+            </button>
+                    <div id="votos3" class="votos">?</div>
+                    <button id="boton4" class="btn btn-primary btn-sm">
+              Respuesta
+            </button>
+                    <div id="votos4" class="votos">?</div>
+                </div>
+            </div>
+            <div class="row mt-4 d-flex justify-content-around">
+                <div class="col text-center">
+                    <div class="level" id="level1">
+                        <h6 class="align-middle level-numero">1</h6>
+                    </div>   
+                </div>
+                <div class="col text-center align-middle">
+                    <div class="level" id="level2">
+                        <h6 class="align-middle level-numero">2</h6>
+                    </div>   
+                </div>
+                <div class="col text-center align-middle">
+                    <div class="level" id="level3">
+                        <h6 class="align-middle level-numero">3</h6>
+                    </div>   
+                </div>
+                <div class="col text-center align-middle">
+                    <div class="level" id="level4">
+                        <h6 class="align-middle level-numero">4</h6>
+                    </div>   
+                </div>
+                <div class="col text-center align-middle">
+                    <div class="level" id="level5">
+                        <h6 class="align-middle level-numero">5</h6>
+                    </div>   
+                </div>
+               
+            </div>
+            <div class="row">
+                <div class="col d-flex justify-content-center">
+                    <h2 id="respuesta" class="respuesta"></h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col" id="displayPlayers">
+                    <h4 class="jugadores-partida mt-5">Jugadores en la partida:</h4>
+                    <div class="nicks d-flex flex-row justify-content-evenly flex-wrap" id="nicks"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Código js-->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+    <!--Importa las dependencias de socket.io y bootstrap en el front end-->
+    <script>
+        let socket = io();
+        let boton1 = document.getElementById("boton1");
+        let boton2 = document.getElementById("boton2");
+        let boton3 = document.getElementById("boton3");
+        let boton4 = document.getElementById("boton4");
+        let pregunta = document.getElementById("pregunta");
+        let botonNick = document.getElementById("botonNick");
+        let input = document.getElementById("input");
+        let nickNames = document.getElementById('nicks');
+        let nick;
+
+        const contador = document.getElementById("contador");
+        const botones = [boton1, boton2, boton3, boton4];
+
+        botonesSender();
+        votosGetter();
+
+        // Pilla un array de nicks enviado desde el servidor cada vez que un jugador nuevo entra, vacía el contenido del html y lo vuelve a pintar con el array actualizado para todos con un emit. 
+        socket.on('playerCatch', (nicks) => {
+            nickNames.innerHTML = "";
+            nicks.forEach((i) => {
+                nick = document.createElement('p');
+                nick.innerHTML = i;
+                nickNames.appendChild(nick);
+            });
+        });
+
+        // En ppio esto deberia mandar el nick
+        botonNick.addEventListener('click', () => {
+
+            if (input.value) {
+                socket.emit('nameSender', input.value)
+            };
+            document.getElementById('pantallanick').style.display = "none";
+            document.getElementById('pantalla').style.display = "block";
+
+        });
+
+        //Coloreado de círculos: 
+        socket.on('color1',()=>{
+            document.getElementById('level1').style.backgroundColor='rgb(207, 79, 20)';
+            document.getElementById('level1').style.color='white';
+            resetColors();
+        });
+        socket.on('color2',()=>{
+            document.getElementById('level2').style.backgroundColor='rgb(207, 79, 20)';
+            document.getElementById('level2').style.color='white';
+        });
+        socket.on('color3',()=>{
+            document.getElementById('level3').style.backgroundColor='rgb(207, 79, 20)';
+            document.getElementById('level3').style.color='white';
+        });
+        socket.on('color4',()=>{
+            document.getElementById('level4').style.backgroundColor='rgb(207, 79, 20)';
+            document.getElementById('level4').style.color='white';
+        });
+        socket.on('color5',()=>{
+            document.getElementById('level5').style.backgroundColor='rgb(207, 79, 20)';
+            document.getElementById('level5').style.color='white';
+        });
+    
+        // Dibuja el cronometro
+        socket.on("cronometro", (args) => {
+            document.getElementById("contador").innerHTML = args;
+        });
+        // Dibuja "Esperando más jugadores"
+        socket.on("waiting", function(arg) {
+            document.getElementById("pregunta").innerHTML = arg;
+        });
+
+        // Limpia los contadores de votos de una pregunta a otra
+        socket.on("clear_counters", (arg1, arg2, arg3, arg4) => {
+            document.getElementById("votos1").innerHTML = arg1;
+            document.getElementById("votos2").innerHTML = arg2;
+            document.getElementById("votos3").innerHTML = arg3;
+            document.getElementById("votos4").innerHTML = arg4;
+        });
+        // Limpia ACIERTO/FALLO de una pregunta a otra
+        socket.on("clear response", () => {
+            document.getElementById("respuesta").innerHTML = "";
+            document.getElementById("votos1").innerHTML = arg1;
+            document.getElementById("votos2").innerHTML = arg2;
+            document.getElementById("votos3").innerHTML = arg3;
+            document.getElementById("votos4").innerHTML = arg4;
+        });
+
+        // Pregunta 1 - REFACTORIZAR CON UN OBJETO
+        socket.on("pregunta1", (arg0, arg1, arg2, arg3, arg4) => {
+            pregunta.innerHTML = arg0;
+            boton1.innerHTML = arg1;
+            boton2.innerHTML = arg2;
+            boton3.innerHTML = arg3;
+            boton4.innerHTML = arg4;
+        });
+        // Pregunta 2 -REFACTORIZAR CON UN OBJETO
+        socket.on("pregunta2", (arg0, arg1, arg2, arg3, arg4) => {
+            pregunta.innerHTML = arg0;
+            boton1.innerHTML = arg1;
+            boton2.innerHTML = arg2;
+            boton3.innerHTML = arg3;
+            boton4.innerHTML = arg4;
+        });
+
+        // Pregunta 3 -REFACTORIZAR CON UN OBJETO
+        socket.on("pregunta3", (arg0, arg1, arg2, arg3, arg4) => {
+            pregunta.innerHTML = arg0;
+            boton1.innerHTML = arg1;
+            boton2.innerHTML = arg2;
+            boton3.innerHTML = arg3;
+            boton4.innerHTML = arg4;
+        });
+
+        socket.on("pregunta4", (arg0, arg1, arg2, arg3, arg4) => {
+            pregunta.innerHTML = arg0;
+            boton1.innerHTML = arg1;
+            boton2.innerHTML = arg2;
+            boton3.innerHTML = arg3;
+            boton4.innerHTML = arg4;
+        });
+
+        socket.on("pregunta5", (arg0, arg1, arg2, arg3, arg4) => {
+            pregunta.innerHTML = arg0;
+            boton1.innerHTML = arg1;
+            boton2.innerHTML = arg2;
+            boton3.innerHTML = arg3;
+            boton4.innerHTML = arg4;
+        });
+
+
+        // Habilita los botones
+        socket.on("enable buttons", () => {
+            botones.forEach((element) => {
+                element.disabled = false;
+            });
+        });
+
+        // Al clickar un botón, emite el evento y desabilita todos los botones
+        function botonesSender() {
+            
+            boton1.addEventListener("click", () => {
+                socket.emit("clickBoton1");
+                disableButtons();
+            });
+            boton2.addEventListener("click", () => {
+                socket.emit("clickBoton2");
+                disableButtons();
+            });
+            boton3.addEventListener("click", () => {
+                socket.emit("clickBoton3");
+                disableButtons();
+            });
+            boton4.addEventListener("click", () => {
+                socket.emit("clickBoton4");
+                disableButtons();
+            });
+        }
+
+        // Al recibir el evento del servidor, actualiza el html interno de los botos y se lo suma.
+        function votosGetter() {
+            socket.on("clickBoton1", (arg) => {
+                document.getElementById("votos1").innerHTML = arg;
+            });
+            socket.on("clickBoton2", (arg) => {
+                document.getElementById("votos2").innerHTML = arg;
+            });
+
+            socket.on("clickBoton3", (arg) => {
+                document.getElementById("votos3").innerHTML = arg;
+            });
+
+            socket.on("clickBoton4", function(arg) {
+                document.getElementById("votos4").innerHTML = arg;
+            });
+        }
+
+        // Valida la respuesta //
+        socket.on("timeout", (args) => {
+            document.getElementById("respuesta").innerHTML = args;
+        });
+
+        // Desabilita botones
+        function disableButtons() {
+            botones.forEach((element) => {
+                element.disabled = true;
+            });
+        }
+
+        function resetColors(){
+            document.getElementById('level2').style.backgroundColor='rgb(230, 230, 230)';
+            document.getElementById('level2').style.color='grey';
+            document.getElementById('level3').style.backgroundColor='rgb(230, 230, 230)';
+            document.getElementById('level3').style.color='grey';
+            document.getElementById('level4').style.backgroundColor='rgb(230, 230, 230)';
+            document.getElementById('level4').style.color='grey';
+            document.getElementById('level5').style.backgroundColor='rgb(230, 230, 230)';
+            document.getElementById('level5').style.color='grey';
+        }
+    </script>
+</body>
+
+</html>
